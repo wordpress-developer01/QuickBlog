@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import {useParams} from 'react-router-dom'
-import { assets, blog_data, comments_data } from '../assets/assets'
+import { assets } from '../assets/assets'
 import Navbar from '../components/Navbar'
 import Moment from 'moment'
 import Footer from '../components/Footer'
@@ -106,7 +106,7 @@ const Blog = () => {
 
                 <textarea onChange={(e)=> setContent(e.target.value)} value={content} placeholder='Comment' className='w-full p-2 border border-gray-300 rounded outline-none h-48' required></textarea>
 
-                <button type="submit" className='bg-primary text-white rounded p-2 px-8 hover:scale-102 transition-all cursor-pointer'>Submit</button>
+                <button type="submit" className='bg-primary text-white rounded p-2 px-8 hover:scale-105 transition-all cursor-pointer'>Submit</button>
              </form>
           </div>
 

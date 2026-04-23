@@ -1,14 +1,13 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { useAppContext } from '../../context/AppContext'
 import toast from 'react-hot-toast';
-import { data } from 'react-router-dom';
 
 const Login = () => {
 
     const {axios, setToken} = useAppContext();
 
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
+    const [email, setEmail] = useState('admin@example.com')
+    const [password, setPassword] = useState('secret12')
 
     const handleSubmit = async (e)=>{
         e.preventDefault()

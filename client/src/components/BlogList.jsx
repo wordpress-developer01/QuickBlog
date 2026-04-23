@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { blog_data, blogCategories } from '../assets/assets'
+import { useState, useEffect } from 'react'
+import { blogCategories } from '../assets/assets'
 import { motion } from "motion/react"
 import BlogCard from './BlogCard'
 import { useAppContext } from '../context/AppContext'
@@ -7,7 +7,11 @@ import { useAppContext } from '../context/AppContext'
 const BlogList = () => {
 
     const [menu, setMenu] = useState("All")
-    const {blogs, input} = useAppContext()
+    const {blogs, input, fetchBlogs} = useAppContext()
+
+    useEffect(() => {
+        fetchBlogs()
+    }, [])
 
     const filteredBlogs = ()=>{
       if(input === ''){

@@ -1,8 +1,9 @@
 import fs from 'fs'
 import imagekit from '../configs/imageKit.js';
 import Blog from '../models/Blog.js';
-import Comment from '../models/Comment.js';
+import Comment from '../models/Comments.js';
 import main from '../configs/gemini.js';
+import { mockBlogs, mockComments } from '../mockData.js';
 
 export const addBlog = async (req, res)=>{
     try {
@@ -49,7 +50,9 @@ export const getAllBlogs = async (req, res)=>{
         const blogs = await Blog.find({isPublished: true})
         res.json({success: true, blogs})
     } catch (error) {
-        res.json({success: false, message: error.message})
+        console.warn('Database error, using mock data:', error.message);
+        // Return mock data when database is unavailable
+        res.json({success: true, blogs: mockBlogs, isDemoData: true})
     }
 }
 
@@ -62,6 +65,11 @@ export const getBlogById = async (req, res) =>{
         }
         res.json({success: true, blog})
     } catch (error) {
+        // Try to find in mock data
+        const mockBlog = mockBlogs.find(b => b._id === req.params.blogId);
+        if(mockBlog) {
+            return res.json({success: true, blog: mockBlog, isDemoData: true});
+        }
         res.json({success: false, message: error.message})
     }
 }

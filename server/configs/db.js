@@ -1,13 +1,24 @@
 import mongoose from "mongoose";
 
+export let isDBConnected = false;
 
 const connectDB = async () =>{
     try {
-        mongoose.connection.on('connected', ()=> console.log("Database Connected")
-        )
-        await mongoose.connect(`${process.env.MONGODB_URI}/quickblog`)
+        mongoose.set('bufferCommands', false);
+        mongoose.connection.on('connected', () => {
+            console.log("✅ Database Connected");
+            isDBConnected = true;
+        });
+
+        await mongoose.connect(`${process.env.MONGODB_URI}/quickblog`, {
+            serverSelectionTimeoutMS: 5000,
+            socketTimeoutMS: 45000,
+            connectTimeoutMS: 10000
+        });
+        isDBConnected = true;
     } catch (error) {
-        console.log(error.message);
+        console.warn("⚠️ Database Connection Error:", error.message);
+        console.log("📌 Using mock data for development...");
     }
 }
 

@@ -1,6 +1,8 @@
 import jwt from 'jsonwebtoken';
 import Blog from '../models/Blog.js';
 import Comment from '../models/Comments.js';
+import { mockBlogs, mockComments } from '../mockData.js';
+import { isDBConnected } from '../configs/db.js';
 
 export const adminLogin = async (req, res) => {
     try {
@@ -16,38 +18,53 @@ export const adminLogin = async (req, res) => {
     }
 }
 
- export const allGetBlogsAdmin = async (req, res) => {
-        try {
-            const blogs = await Blog.find({}).sort({createdAt: -1})
-            res.json({success: true, blogs})
-        } catch (error) {
-            res.json({success: false, message: error.message})
-        }
+export const getAllBlogsAdmin = async (req, res) => {
+    if (!isDBConnected) {
+        return res.json({success: true, blogs: mockBlogs, isDemoData: true});
     }
-
+    try {
+        const blogs = await Blog.find({}).sort({createdAt: -1})
+        res.json({success: true, blogs})
+    } catch (error) {
+        res.json({success: true, blogs: mockBlogs, isDemoData: true})
+    }
+}
 
 export const getAllComments = async (req, res) => {
+    if (!isDBConnected) {
+        return res.json({success: true, comments: mockComments, isDemoData: true});
+    }
     try {
         const comments = await Comment.find({}).populate('blog').sort({createdAt: -1})
         res.json({success: true, comments})
     } catch (error) {
-        res.json({success: false, message: error.message})
+        res.json({success: true, comments: mockComments, isDemoData: true})
     }
-}    
+}
 
 export const getDashboard = async (req, res) => {
+    if (!isDBConnected) {
+        return res.json({success: true, dashboardData: {
+            recentBlogs: mockBlogs,
+            blogs: mockBlogs.length,
+            comments: mockComments.length,
+            drafts: 0
+        }, isDemoData: true});
+    }
     try {
-        const recentBlogs = await Blog.find({}).sort({createdAt: -1 }).limit(5);
+        const recentBlogs = await Blog.find({}).sort({createdAt: -1}).limit(5);
         const blogs = await Blog.countDocuments();
         const comments = await Comment.countDocuments()
-        const drafts = await  Blog.countDocuments({isPublished:false})
+        const drafts = await Blog.countDocuments({isPublished:false})
 
-        const DashboardData = {
-            recentBlogs, blogs, comments, drafts
-        }
-        res.json({success: true, DashboardData})
+        res.json({success: true, dashboardData: { recentBlogs, blogs, comments, drafts }})
     } catch (error) {
-        res.json({success: false, message: error.message})
+        res.json({success: true, dashboardData: {
+            recentBlogs: mockBlogs,
+            blogs: mockBlogs.length,
+            comments: mockComments.length,
+            drafts: 0
+        }, isDemoData: true})
     }
 }
 
